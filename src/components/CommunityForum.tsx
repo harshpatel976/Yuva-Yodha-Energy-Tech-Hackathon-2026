@@ -2,7 +2,19 @@ import React, { useState } from 'react';
 import { useFarmContext } from '../context/FarmContext';
 import { MOCK_FORUM_POSTS } from '../data/mockData';
 import type { ForumPost } from '../types';
-import { Users, ThumbsUp, MessageSquare, Tag, Plus, Send } from 'lucide-react';
+import { Users, ThumbsUp, MessageSquare, Plus, Send } from 'lucide-react';
+
+const palette = {
+  parchment: '#EAE3CD',
+  panel: '#F6F1E3',
+  ink: '#262B1E',
+  inkSoft: '#5C6350',
+  line: '#CDC3A0',
+  green: '#3E6B45',
+  greenDeep: '#26422B',
+  water: '#2E6C89',
+  ochre: '#B0651E',
+};
 
 export const CommunityForum: React.FC = () => {
   const { showNotification } = useFarmContext();
@@ -14,15 +26,10 @@ export const CommunityForum: React.FC = () => {
 
   const categories = ['All', 'Irrigation', 'Pests', 'Weather', 'Subsidies'];
 
-  const filteredPosts = activeCategory === 'All' 
-    ? posts 
-    : posts.filter(p => p.category === activeCategory);
+  const filteredPosts = activeCategory === 'All' ? posts : posts.filter((p) => p.category === activeCategory);
 
   const handleLike = (id: string) => {
-    setPosts(prev => prev.map(p => {
-      if (p.id === id) return { ...p, likes: p.likes + 1 };
-      return p;
-    }));
+    setPosts((prev) => prev.map((p) => (p.id === id ? { ...p, likes: p.likes + 1 } : p)));
   };
 
   const handleCreatePost = (e: React.FormEvent) => {
@@ -52,155 +59,146 @@ export const CommunityForum: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      
-      {/* HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl">
-        <div>
-          <div className="flex items-center gap-2">
-            <Users className="w-7 h-7 text-emerald-400" />
-            <h1 className="text-2xl font-bold text-white">Farmer Community & Knowledge Exchange</h1>
+    <div style={{ backgroundColor: palette.parchment, color: palette.ink }} className="font-sans min-h-screen">
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 py-10 space-y-8">
+
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-xs" style={{ color: palette.inkSoft }}>
+              <Users className="w-3.5 h-3.5" /> Farmer community
+            </div>
+            <h1 className="font-serif text-3xl mt-1">Knowledge exchange</h1>
+            <p className="text-sm mt-2 max-w-xl" style={{ color: palette.inkSoft }}>
+              12,000+ farmers, agronomists, FPOs and water conservation specialists across India.
+            </p>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Connect with 12,000+ farmers, agronomists, FPOs & water conservation specialists across India.
-          </p>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-4 py-2.5 text-sm text-white flex items-center gap-2 self-start"
+            style={{ backgroundColor: palette.green }}
+          >
+            <Plus className="w-4 h-4" /> Ask a question
+          </button>
         </div>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="agri-button-primary px-4 py-2.5 text-xs flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Ask Question / Share Tip</span>
-        </button>
-      </div>
+        {/* CATEGORY FILTERS — underlined tabs, not pill buttons */}
+        <div className="flex flex-wrap gap-6 text-sm" style={{ borderBottom: `1px solid ${palette.line}` }}>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className="pb-2"
+              style={{
+                color: activeCategory === cat ? palette.ink : palette.inkSoft,
+                borderBottom: activeCategory === cat ? `2px solid ${palette.green}` : '2px solid transparent',
+              }}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
 
-      {/* CATEGORY FILTERS */}
-      <div className="flex flex-wrap gap-2">
-        {categories.map(cat => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-              activeCategory === cat
-                ? 'bg-agri-600 text-white shadow-lg shadow-agri-900/40'
-                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* POSTS LIST */}
-      <div className="space-y-6">
-        {filteredPosts.map(post => (
-          <div key={post.id} className="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
-            <div className="flex justify-between items-start">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xl">
-                  {post.avatar}
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white flex items-center gap-2">
-                    <span>{post.author}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-normal">
-                      {post.location}
-                    </span>
+        {/* POSTS — one continuous list, not stacked cards */}
+        <div>
+          {filteredPosts.map((post) => (
+            <div key={post.id} className="py-6" style={{ borderBottom: `1px solid ${palette.line}` }}>
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">{post.avatar}</span>
+                  <div>
+                    <div className="text-sm font-medium">
+                      {post.author} <span style={{ color: palette.inkSoft }}>· {post.location}</span>
+                    </div>
+                    <div className="text-xs" style={{ color: palette.inkSoft }}>
+                      {post.authorRole} · {post.timestamp}
+                    </div>
                   </div>
-                  <div className="text-[11px] text-slate-400">{post.authorRole} • {post.timestamp}</div>
                 </div>
+                <span className="text-xs shrink-0" style={{ color: palette.water }}>{post.category}</span>
               </div>
 
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-800 text-aqua-400 border border-slate-700">
-                {post.category}
-              </span>
-            </div>
+              <h3 className="text-base font-medium mb-1">{post.title}</h3>
+              <p className="text-sm leading-relaxed" style={{ color: palette.inkSoft }}>{post.content}</p>
 
-            <div className="space-y-2">
-              <h3 className="text-base font-bold text-slate-100">{post.title}</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">{post.content}</p>
-            </div>
+              <div className="flex flex-wrap gap-2 mt-3">
+                {post.tags.map((tag, idx) => (
+                  <span key={idx} className="text-xs px-2 py-0.5" style={{ border: `1px solid ${palette.line}`, color: palette.inkSoft }}>
+                    #{tag}
+                  </span>
+                ))}
+              </div>
 
-            {/* Tags */}
-            <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag, idx) => (
-                <span key={idx} className="text-[10px] text-slate-400 flex items-center gap-1 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                  <Tag className="w-3 h-3 text-emerald-400" /> #{tag}
-                </span>
-              ))}
+              <div className="flex items-center gap-6 mt-4 text-xs">
+                <button
+                  onClick={() => handleLike(post.id)}
+                  className="flex items-center gap-1.5 transition-colors"
+                  style={{ color: palette.inkSoft }}
+                >
+                  <ThumbsUp className="w-3.5 h-3.5" /> {post.likes} helpful
+                </button>
+                <button className="flex items-center gap-1.5" style={{ color: palette.inkSoft }}>
+                  <MessageSquare className="w-3.5 h-3.5" /> {post.repliesCount} replies
+                </button>
+              </div>
             </div>
-
-            {/* Post Footer Actions */}
-            <div className="flex items-center gap-6 pt-3 border-t border-slate-800/80 text-xs">
-              <button 
-                onClick={() => handleLike(post.id)}
-                className="flex items-center gap-1.5 text-slate-400 hover:text-emerald-400 transition-colors"
-              >
-                <ThumbsUp className="w-4 h-4" />
-                <span>{post.likes} Helpful</span>
-              </button>
-
-              <button className="flex items-center gap-1.5 text-slate-400 hover:text-aqua-400 transition-colors">
-                <MessageSquare className="w-4 h-4" />
-                <span>{post.repliesCount} Replies</span>
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* CREATE POST MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-          <div className="glass-panel w-full max-w-lg p-6 rounded-2xl border border-slate-800 space-y-4">
-            <h3 className="text-lg font-bold text-white">Post to Farmer Community</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(38,43,30,0.6)' }}>
+          <div className="w-full max-w-lg p-6 space-y-4" style={{ backgroundColor: palette.panel }}>
+            <h3 className="font-serif text-xl">Post to the community</h3>
             <form onSubmit={handleCreatePost} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Title</label>
+                <label className="block text-xs mb-1" style={{ color: palette.inkSoft }}>Title</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Recommended moisture levels for wheat in sandy soil"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-agri-500"
+                  className="w-full px-4 py-2.5 text-sm focus:outline-none"
+                  style={{ backgroundColor: palette.parchment, border: `1px solid ${palette.line}`, color: palette.ink }}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Content & Advice</label>
+                <label className="block text-xs mb-1" style={{ color: palette.inkSoft }}>Content & advice</label>
                 <textarea
                   required
                   rows={4}
                   placeholder="Share your experience with Smart Water Guardian..."
                   value={newContent}
                   onChange={(e) => setNewContent(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-agri-500"
-                ></textarea>
+                  className="w-full px-4 py-2 text-sm focus:outline-none"
+                  style={{ backgroundColor: palette.parchment, border: `1px solid ${palette.line}`, color: palette.ink }}
+                />
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  className="px-4 py-2 text-sm"
+                  style={{ color: palette.inkSoft }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="agri-button-primary px-5 py-2 text-xs flex items-center gap-2"
+                  className="px-5 py-2 text-sm text-white flex items-center gap-2"
+                  style={{ backgroundColor: palette.green }}
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Publish Post</span>
+                  <Send className="w-4 h-4" /> Publish post
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
-
     </div>
   );
 };

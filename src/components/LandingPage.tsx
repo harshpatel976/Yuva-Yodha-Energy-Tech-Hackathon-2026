@@ -1,318 +1,222 @@
 import React from 'react';
 import { useFarmContext } from '../context/FarmContext';
-import { 
-  Droplet, 
-  Sparkles, 
-  ArrowRight, 
-  CheckCircle2, 
-  ShieldCheck, 
-  CloudRain, 
-  TrendingUp, 
-  Mic, 
-  Cpu, 
+import {
+  ArrowRight,
+  CloudRain,
+  TrendingUp,
+  Mic,
+  Cpu,
   Sliders,
-  Flame,
-  Activity
+  ShieldCheck,
+  Activity,
+  Droplet,
 } from 'lucide-react';
+
+const palette = {
+  parchment: '#EAE3CD',
+  panel: '#F6F1E3',
+  ink: '#262B1E',
+  inkSoft: '#5C6350',
+  line: '#CDC3A0',
+  green: '#3E6B45',
+  greenDeep: '#26422B',
+  water: '#2E6C89',
+  ochre: '#B0651E',
+};
 
 export const LandingPage: React.FC = () => {
   const { setActiveTab, setIsVoiceAssistantOpen } = useFarmContext();
 
+  // Problem and solution merged into paired rows for the zigzag narrative
+  const pairs = [
+    {
+      problem: 'Fields are watered on a fixed timer, not on what the soil actually needs — wasting close to 70% of freshwater used in agriculture.',
+      solution: 'Capacitive sensors read root-zone moisture continuously, so irrigation starts and stops based on real conditions.',
+    },
+    {
+      problem: 'Deeper borewells and heavier pumping have pushed water tables down year after year.',
+      solution: 'A weather-aware AI model prescribes the exact duration needed, cutting pumping time and the electricity bill with it.',
+    },
+    {
+      problem: 'Over-watering suffocates roots, degrades soil, and lets fungal disease take hold before anyone notices.',
+      solution: 'Automated valves hold moisture inside a healthy band, and a voice assistant in five regional languages keeps every farmer in the loop.',
+    },
+  ];
+
+  const features = [
+    { n: '01', title: 'Real-time telemetry', body: 'Moisture, humidity, temperature and pump status live from ESP32 field nodes.', icon: Activity },
+    { n: '02', title: 'Weather intelligence', body: '7-day rainfall forecasts delay irrigation when rain is coming.', icon: CloudRain },
+    { n: '03', title: 'Multilingual voice bot', body: 'Ask in Hindi, Punjabi, Gujarati, Marathi or Tamil, get an answer in kind.', icon: Mic },
+    { n: '04', title: 'Auto pump relay', body: 'Trigger rules switch the pump on and off at precise thresholds.', icon: Sliders },
+    { n: '05', title: 'Water & carbon impact', body: 'Liters saved, rupees saved, CO₂ reduced — tracked for reporting.', icon: TrendingUp },
+    { n: '06', title: 'FPO & NGO portal', body: 'One regional dashboard for cooperatives across many farms.', icon: ShieldCheck },
+  ];
+
+  const stack = [
+    { title: 'Soil sensors', body: 'Capacitive moisture v1.2 with a DHT22 for temperature and humidity.' },
+    { title: 'ESP32 gateway', body: 'Microcontroller transmitting readings over Wi-Fi or GSM.' },
+    { title: 'MQTT broker', body: 'Low-latency streaming for sensor telemetry.' },
+    { title: 'AI engine', body: 'A crop evapotranspiration model combined with weather data.' },
+    { title: 'Farmer app', body: 'Voice assistant, SMS alerts and the web dashboard.' },
+  ];
+
   return (
-    <div className="space-y-16 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      
-      {/* HERO SECTION */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-slate-800 p-8 sm:p-12 lg:p-16 shadow-2xl">
-        {/* Glow Effects */}
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-aqua-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div style={{ backgroundColor: palette.parchment, color: palette.ink }} className="font-sans">
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Left Hero Content */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-agri-500/15 border border-agri-500/30 text-agri-400 font-semibold text-xs tracking-wide">
-              <Sparkles className="w-4 h-4 text-emerald-400" />
-              <span>NextStep Hacks 2026 Winner Submission</span>
-            </div>
+      {/* TOP IDENTITY BAR — new, wasn't here before */}
+      <div
+        className="flex items-center justify-between px-4 sm:px-8 lg:px-12 py-4"
+        style={{ borderBottom: `1px solid ${palette.line}` }}
+      >
+        <span className="font-serif text-lg">Smart Water Guardian</span>
+        <div className="hidden sm:flex items-center gap-8 text-xs" style={{ color: palette.inkSoft }}>
+          <span>NextStep Hacks 2026</span>
+          <span>ESP32 · MQTT · React</span>
+        </div>
+        <button
+          onClick={() => setActiveTab('dashboard')}
+          className="text-xs px-4 py-2 text-white"
+          style={{ backgroundColor: palette.green }}
+        >
+          Open dashboard
+        </button>
+      </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-              Smart Water <span className="agri-gradient-text">Guardian</span>
-            </h1>
-
-            <p className="text-lg sm:text-xl text-slate-300 font-light leading-relaxed">
-              AI + IoT based Smart Irrigation and Water Conservation Platform. Save up to <strong className="text-emerald-400 font-semibold">50% water</strong>, cut electricity costs, and boost crop productivity with precision soil moisture telemetry & weather intelligence.
-            </p>
-
-            <blockquote className="border-l-4 border-emerald-500 pl-4 text-slate-400 italic text-sm py-1 bg-slate-900/50 rounded-r-lg">
-              "FarmSphere helps farmers save water, reduce resource waste, and improve crop yields through AI-powered irrigation recommendations."
-            </blockquote>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap gap-4 pt-2">
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className="agri-button-primary px-6 py-3.5 text-sm flex items-center gap-2 shadow-xl hover:scale-105"
-              >
-                <span>Launch Farmer Dashboard</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={() => setActiveTab('ai-advisor')}
-                className="agri-button-aqua px-6 py-3.5 text-sm flex items-center gap-2 shadow-xl hover:scale-105"
-              >
-                <BrainCircuitIcon className="w-4 h-4" />
-                <span>Test AI Recommendation Engine</span>
-              </button>
-
-              <button
-                onClick={() => setIsVoiceAssistantOpen(true)}
-                className="px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm flex items-center gap-2 transition-all"
-              >
-                <Mic className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <span>Try Voice Assistant (Hindi/English)</span>
-              </button>
-            </div>
-
-            {/* Micro Stats */}
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800">
-              <div>
-                <div className="text-2xl font-bold text-emerald-400">30 - 50%</div>
-                <div className="text-xs text-slate-400">Water Saved</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-aqua-400">₹4,200/mo</div>
-                <div className="text-xs text-slate-400">Electricity Saved</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-amber-400">+15%</div>
-                <div className="text-xs text-slate-400">Crop Yield Boost</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Hero Interactive Teaser Card */}
-          <div className="lg:col-span-5">
-            <div className="glass-panel rounded-2xl p-6 border border-agri-500/30 shadow-2xl space-y-5">
-              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
-                  <span className="text-xs font-bold text-slate-200 uppercase tracking-wider">Live IoT Telemetry Node</span>
-                </div>
-                <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono">ESP32 Online</span>
-              </div>
-
-              {/* Moisture Gauge Widget */}
-              <div className="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-3">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-400">Soil Moisture (Root Zone)</span>
-                  <span className="text-emerald-400 font-bold">26% (Threshold Warning)</span>
-                </div>
-                <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700">
-                  <div className="bg-gradient-to-r from-amber-500 to-emerald-500 h-full rounded-full w-[26%] transition-all duration-500"></div>
-                </div>
-                <div className="flex justify-between text-[10px] text-slate-500">
-                  <span>0% Dry</span>
-                  <span>35% Optimal Target</span>
-                  <span>100% Saturation</span>
-                </div>
-              </div>
-
-              {/* AI Recommendation Teaser */}
-              <div className="bg-gradient-to-br from-slate-900 to-emerald-950/40 rounded-xl p-4 border border-agri-500/40 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
-                  <CloudRain className="w-4 h-4 text-sky-400" />
-                  <span>AI Weather Decision Engine</span>
-                </div>
-                <p className="text-xs text-slate-300 leading-snug">
-                  "Rain expected tomorrow (75% probability). Delay irrigation by 18 hours to prevent over-irrigation & save ~4,200L water."
-                </p>
-              </div>
-
-              {/* Interactive Quick Pump Switch */}
-              <div className="flex items-center justify-between p-3 bg-slate-900/80 rounded-xl border border-slate-800">
-                <div className="text-xs">
-                  <div className="font-semibold text-slate-200">Main Tube-well Pump</div>
-                  <div className="text-slate-400 text-[10px]">Auto-Mode Enabled</div>
-                </div>
-                <button
-                  onClick={() => setActiveTab('dashboard')}
-                  className="px-3 py-1.5 rounded-lg bg-agri-600 hover:bg-agri-500 text-white font-semibold text-xs shadow"
-                >
-                  Manage Pump
-                </button>
-              </div>
-            </div>
-          </div>
-
+      {/* HERO — pure typography, centered, no side panel */}
+      <section className="px-4 sm:px-8 lg:px-12 py-20 text-center max-w-3xl mx-auto space-y-6">
+        <h1 className="font-serif text-5xl sm:text-6xl leading-[1.05]">
+          Water the field, not the calendar
+        </h1>
+        <p className="text-lg leading-relaxed" style={{ color: palette.inkSoft }}>
+          An AI and IoT irrigation platform that reads the soil instead of the clock —
+          saving up to 50% of water while lifting crop yield.
+        </p>
+        <div className="flex flex-wrap justify-center gap-3 pt-2">
+          <button
+            onClick={() => setActiveTab('ai-advisor')}
+            className="px-5 py-3 text-sm text-white flex items-center gap-2"
+            style={{ backgroundColor: palette.green }}
+          >
+            Test the AI engine <ArrowRight className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setIsVoiceAssistantOpen(true)}
+            className="px-5 py-3 text-sm flex items-center gap-2"
+            style={{ border: `1px solid ${palette.ink}` }}
+          >
+            <Mic className="w-4 h-4" /> Try voice, Hindi or English
+          </button>
         </div>
       </section>
 
-      {/* PROBLEM vs SOLUTION SECTION */}
-      <section className="space-y-8">
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <h2 className="text-3xl font-bold text-white tracking-tight">The Agricultural Water Crisis & Our Solution</h2>
-          <p className="text-slate-400 text-sm">
-            Agriculture consumes nearly 70% of freshwater globally. Traditional experience-based irrigation leads to over-watering, falling water tables, and high electricity bills.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Problem Card */}
-          <div className="glass-card rounded-2xl p-6 border-red-500/20 bg-gradient-to-b from-red-950/20 to-slate-900 space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
-              <Flame className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-white">The Problem</h3>
-            <ul className="space-y-3 text-xs text-slate-300">
-              <li className="flex items-start gap-2">
-                <span className="text-red-400 font-bold">•</span>
-                <span><strong>70% Freshwater Waste:</strong> Farmers over-irrigate fields based on fixed timers rather than actual soil moisture.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-red-400 font-bold">•</span>
-                <span><strong>Groundwater Depletion:</strong> Rapidly sinking water tables require deeper borewells and high electricity consumption.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-red-400 font-bold">•</span>
-                <span><strong>Crop Root Damage & Salinization:</strong> Over-watering suffocates crop roots and degrades soil fertility.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-red-400 font-bold">•</span>
-                <span><strong>Late Disease Identification:</strong> Fungal outbreaks triggered by excess moisture are detected too late.</span>
-              </li>
-            </ul>
+      {/* TICKER — stats and live telemetry fused into one strip, not separate blocks */}
+      <section
+        className="grid grid-cols-2 sm:grid-cols-4 divide-x"
+        style={{ borderTop: `1px solid ${palette.line}`, borderBottom: `1px solid ${palette.line}`, borderColor: palette.line, backgroundColor: palette.panel }}
+      >
+        {[
+          ['Water saved', '30–50%', palette.green],
+          ['Electricity saved', '₹4,200/mo', palette.water],
+          ['Yield boost', '+15%', palette.ochre],
+        ].map(([label, value, color]) => (
+          <div key={label as string} className="px-6 py-6">
+            <div className="font-mono text-2xl" style={{ color: color as string }}>{value}</div>
+            <div className="text-xs mt-1" style={{ color: palette.inkSoft }}>{label}</div>
           </div>
+        ))}
+        <div className="px-6 py-6">
+          <div className="flex items-center gap-2 text-xs mb-1">
+            <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ backgroundColor: palette.green }} />
+            <span style={{ color: palette.inkSoft }}>Live node</span>
+          </div>
+          <div className="font-mono text-2xl" style={{ color: palette.ochre }}>26%</div>
+          <div className="text-xs" style={{ color: palette.inkSoft }}>Root-zone moisture, below threshold</div>
+        </div>
+      </section>
 
-          {/* Solution Card */}
-          <div className="glass-card rounded-2xl p-6 border-agri-500/30 bg-gradient-to-b from-emerald-950/20 to-slate-900 space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Droplet className="w-6 h-6" />
+      {/* ZIGZAG PROBLEM/SOLUTION — alternating rows, not a two-column box */}
+      <section className="px-4 sm:px-8 lg:px-12 py-20 max-w-5xl mx-auto space-y-16">
+        <h2 className="font-serif text-3xl max-w-xl">
+          Every field problem, answered in the same breath
+        </h2>
+
+        <div className="space-y-14">
+          {pairs.map((pair, i) => (
+            <div
+              key={pair.problem.slice(0, 12)}
+              className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-start ${i % 2 === 1 ? 'md:[&>*:first-child]:order-2' : ''}`}
+            >
+              <div className="pl-4" style={{ borderLeft: `2px solid ${palette.ochre}` }}>
+                <div className="text-xs mb-1" style={{ color: palette.ochre }}>Without it</div>
+                <p className="text-sm leading-relaxed">{pair.problem}</p>
+              </div>
+              <div className="pl-4" style={{ borderLeft: `2px solid ${palette.green}` }}>
+                <div className="text-xs mb-1" style={{ color: palette.green }}>With Smart Water Guardian</div>
+                <p className="text-sm leading-relaxed">{pair.solution}</p>
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-white">Smart Water Guardian Solution</h3>
-            <ul className="space-y-3 text-xs text-slate-300">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span><strong>Real-time IoT Soil Sensing:</strong> Low-cost capacitive sensors deliver live moisture & temperature feeds.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span><strong>AI Irrigation Scheduling:</strong> Machine learning evaluates crop growth stage + weather forecasts to prescribe exact irrigation duration.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span><strong>Voice Assistant in Regional Languages:</strong> Simple voice queries in Hindi, Punjabi, Gujarati, Marathi, Tamil for non-tech-savvy farmers.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span><strong>Automated Valve Control:</strong> Smart relays turn pumps ON/OFF based on precise moisture thresholds.</span>
-              </li>
-            </ul>
+          ))}
+        </div>
+      </section>
+
+      {/* FEATURES — a magazine index, not a card grid */}
+      <section style={{ backgroundColor: palette.panel, borderTop: `1px solid ${palette.line}`, borderBottom: `1px solid ${palette.line}` }}>
+        <div className="px-4 sm:px-8 lg:px-12 py-20 max-w-5xl mx-auto">
+          <h2 className="font-serif text-3xl mb-10">What's in the platform</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12">
+            {features.map(({ n, title, body, icon: Icon }) => (
+              <div key={n} className="flex items-baseline gap-4 py-5" style={{ borderTop: `1px solid ${palette.line}` }}>
+                <span className="font-mono text-xs shrink-0" style={{ color: palette.inkSoft }}>{n}</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <Icon className="w-4 h-4" style={{ color: palette.green }} />
+                    <span className="text-sm font-medium">{title}</span>
+                  </div>
+                  <p className="text-xs mt-1" style={{ color: palette.inkSoft }}>{body}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CORE FEATURES GRID */}
-      <section className="space-y-8">
-        <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold text-white">Key Platform Features</h2>
-          <p className="text-slate-400 text-sm mt-2">Built for hackathons, designed for real-world agricultural impact.</p>
-        </div>
+      {/* HARDWARE STACK — vertical timeline, not a horizontal strip */}
+      <section className="px-4 sm:px-8 lg:px-12 py-20 max-w-3xl mx-auto">
+        <h2 className="font-serif text-3xl mb-2">How a field node works</h2>
+        <p className="text-sm mb-10" style={{ color: palette.inkSoft }}>Roughly ₹3,500 in hardware per node.</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          <div className="glass-card rounded-xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <Activity className="w-5 h-5" />
+        <div className="relative pl-8" style={{ borderLeft: `2px solid ${palette.line}` }}>
+          {stack.map((step, i) => (
+            <div key={step.title} className="relative pb-10 last:pb-0">
+              <span
+                className="absolute -left-[2.55rem] w-4 h-4 flex items-center justify-center text-[10px] font-mono text-white"
+                style={{ backgroundColor: palette.green }}
+              >
+                {i + 1}
+              </span>
+              <div className="text-sm font-medium">{step.title}</div>
+              <div className="text-xs mt-1" style={{ color: palette.inkSoft }}>{step.body}</div>
             </div>
-            <h4 className="text-base font-bold text-white">Real-Time Telemetry</h4>
-            <p className="text-xs text-slate-400">Tracks soil moisture, ambient humidity, temperature, and pump status live from ESP32 field nodes.</p>
-          </div>
-
-          <div className="glass-card rounded-xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-aqua-500/20 flex items-center justify-center text-aqua-400">
-              <CloudRain className="w-5 h-5" />
-            </div>
-            <h4 className="text-base font-bold text-white">Weather Intelligence</h4>
-            <p className="text-xs text-slate-400">Integrates 7-day rainfall forecasts to delay irrigation when rain is expected, preventing water waste.</p>
-          </div>
-
-          <div className="glass-card rounded-xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
-              <Mic className="w-5 h-5" />
-            </div>
-            <h4 className="text-base font-bold text-white">Multilingual Voice Bot</h4>
-            <p className="text-xs text-slate-400">Supports Hindi ("Mere khet ko paani kab dena hai?"), Punjabi, Gujarati, Marathi, Tamil voice queries.</p>
-          </div>
-
-          <div className="glass-card rounded-xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
-              <Sliders className="w-5 h-5" />
-            </div>
-            <h4 className="text-base font-bold text-white">Auto Pump Relay</h4>
-            <p className="text-xs text-slate-400">Smart trigger rules turn pumps ON when moisture drops below threshold and OFF when saturated.</p>
-          </div>
-
-          <div className="glass-card rounded-xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-            <h4 className="text-base font-bold text-white">Water & Carbon Impact</h4>
-            <p className="text-xs text-slate-400">Calculates liters saved, electricity cost savings (₹), and CO₂ footprint reduction for sustainability reporting.</p>
-          </div>
-
-          <div className="glass-card rounded-xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-400">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <h4 className="text-base font-bold text-white">FPO & NGO Portal</h4>
-            <p className="text-xs text-slate-400">Multi-farm regional dashboard for cooperatives to track water conservation across hundreds of acres.</p>
-          </div>
-
+          ))}
         </div>
       </section>
 
-      {/* HARDWARE PROTOTYPE ARCHITECTURE */}
-      <section className="glass-panel rounded-2xl p-8 border border-slate-800 space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
-          <div>
-            <h3 className="text-2xl font-bold text-white">Hardware & System Architecture</h3>
-            <p className="text-xs text-slate-400">Low-cost IoT prototype stack (~₹3,500 total cost per field node)</p>
-          </div>
-          <div className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-emerald-400 font-mono">
-            ESP32 + MQTT + Node.js + React
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-center">
-          <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-            <div className="text-emerald-400 font-bold text-sm">1. Soil Sensors</div>
-            <p className="text-[11px] text-slate-400">Capacitive Moisture v1.2 + DHT22 Temp/Humidity</p>
-          </div>
-          <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-            <div className="text-emerald-400 font-bold text-sm">2. ESP32 Gateway</div>
-            <p className="text-[11px] text-slate-400">Microcontroller transmitting via Wi-Fi / GSM</p>
-          </div>
-          <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-            <div className="text-emerald-400 font-bold text-sm">3. MQTT Broker</div>
-            <p className="text-[11px] text-slate-400">Low-latency sensor telemetry streaming</p>
-          </div>
-          <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-            <div className="text-emerald-400 font-bold text-sm">4. AI Engine</div>
-            <p className="text-[11px] text-slate-400">Crop Evapotranspiration + Weather API ML model</p>
-          </div>
-          <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-            <div className="text-emerald-400 font-bold text-sm">5. Farmer App</div>
-            <p className="text-[11px] text-slate-400">Voice Assistant + SMS + Web Dashboard</p>
-          </div>
-        </div>
+      {/* CLOSING BAND — dark, new; bookends the light page with the sidebar's tone */}
+      <section
+        className="px-4 sm:px-8 lg:px-12 py-16 text-center text-white space-y-5"
+        style={{ backgroundColor: palette.greenDeep }}
+      >
+        <Droplet className="w-6 h-6 mx-auto opacity-70" />
+        <h2 className="font-serif text-3xl">Ready to see your own field's numbers?</h2>
+        <button
+          onClick={() => setActiveTab('dashboard')}
+          className="px-6 py-3 text-sm inline-flex items-center gap-2"
+          style={{ border: '1px solid rgba(255,255,255,0.5)' }}
+        >
+          Open the farmer dashboard <ArrowRight className="w-4 h-4" />
+        </button>
       </section>
 
     </div>
   );
 };
-
-function BrainCircuitIcon(props: any) {
-  return <Cpu {...props} />;
-}

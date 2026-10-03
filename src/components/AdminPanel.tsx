@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 import { useFarmContext } from '../context/FarmContext';
-import { ShieldCheck, Send, Bell, MapPin } from 'lucide-react';
+import { ShieldCheck, Send, MapPin } from 'lucide-react';
+
+const palette = {
+  parchment: '#EAE3CD',
+  panel: '#F6F1E3',
+  ink: '#262B1E',
+  inkSoft: '#5C6350',
+  line: '#CDC3A0',
+  green: '#3E6B45',
+  greenDeep: '#26422B',
+  water: '#2E6C89',
+  ochre: '#B0651E',
+};
 
 export const AdminPanel: React.FC = () => {
   const { farms, sensors, showNotification } = useFarmContext();
@@ -8,145 +20,132 @@ export const AdminPanel: React.FC = () => {
 
   const totalAcres = farms.reduce((acc, f) => acc + f.areaAcres, 0);
   const totalWaterSaved = farms.reduce((acc, f) => acc + f.waterSavedLiters, 0);
-  const onlineSensors = sensors.filter(s => s.status === 'ONLINE').length;
+  const onlineSensors = sensors.filter((s) => s.status === 'ONLINE').length;
 
   const handleBroadcastAlert = (e: React.FormEvent) => {
     e.preventDefault();
     if (!broadcastMessage.trim()) return;
-    showNotification(`Emergency Broadcast dispatched via WhatsApp/SMS to all registered farmers: "${broadcastMessage.trim()}"`);
+    showNotification(`Emergency broadcast dispatched via WhatsApp/SMS to all registered farmers: "${broadcastMessage.trim()}"`);
     setBroadcastMessage('');
   };
 
   return (
-    <div className="space-y-8 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      
-      {/* HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl">
-        <div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-7 h-7 text-aqua-400" />
-            <h1 className="text-2xl font-bold text-white">FPO & Agricultural Agency Regional Portal</h1>
-          </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Overseeing water conservation analytics, IoT hardware nodes, and heatwave alerts across district farm clusters.
-          </p>
-        </div>
+    <div style={{ backgroundColor: palette.parchment, color: palette.ink }} className="font-sans min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 py-10 space-y-10">
 
-        <div className="px-3 py-1.5 rounded-xl bg-aqua-950 border border-aqua-500/40 text-aqua-300 font-mono text-xs">
-          Role: FPO Regional Director
-        </div>
-      </div>
-
-      {/* REGIONAL STATS CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-1">
-          <div className="text-xs text-slate-400">Total Registered Farms</div>
-          <div className="text-3xl font-extrabold text-white">{farms.length} Clusters</div>
-          <div className="text-[10px] text-emerald-400">{totalAcres} Total Cultivated Acres</div>
-        </div>
-
-        <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-1">
-          <div className="text-xs text-slate-400">Regional Water Conserved</div>
-          <div className="text-3xl font-extrabold text-emerald-400">
-            {totalWaterSaved.toLocaleString()} L
-          </div>
-          <div className="text-[10px] text-slate-400">Prevents Aquifer Depletion</div>
-        </div>
-
-        <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-1">
-          <div className="text-xs text-slate-400">Active Field Sensors</div>
-          <div className="text-3xl font-extrabold text-aqua-400">{onlineSensors} / {sensors.length}</div>
-          <div className="text-[10px] text-emerald-400">100% Telemetry Uptime</div>
-        </div>
-
-        <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-1">
-          <div className="text-xs text-slate-400">Active Crop Varieties</div>
-          <div className="text-3xl font-extrabold text-amber-400">Wheat, Cotton, Rice</div>
-          <div className="text-[10px] text-slate-400">Multi-crop AI models loaded</div>
-        </div>
-
-      </div>
-
-      {/* MULTI-FARM TELEMETRY TABLE */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-        <h3 className="text-base font-bold text-white">Cluster Telemetry Overview</h3>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left text-slate-300">
-            <thead className="bg-slate-900 text-slate-400 uppercase text-[10px]">
-              <tr>
-                <th className="p-3">Farm Name</th>
-                <th className="p-3">Location</th>
-                <th className="p-3">Crop Type</th>
-                <th className="p-3">Moisture %</th>
-                <th className="p-3">Pump State</th>
-                <th className="p-3">Season Water Saved</th>
-                <th className="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800">
-              {farms.map(f => (
-                <tr key={f.id} className="hover:bg-slate-800/40">
-                  <td className="p-3 font-semibold text-white">{f.name}</td>
-                  <td className="p-3 text-slate-400 flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-red-400" /> {f.location}
-                  </td>
-                  <td className="p-3 text-slate-300">{f.cropType}</td>
-                  <td className="p-3 font-mono font-bold text-emerald-400">{f.soilMoisture}%</td>
-                  <td className="p-3">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      f.pumpStatus === 'ON' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'
-                    }`}>
-                      {f.pumpStatus} ({f.pumpMode})
-                    </span>
-                  </td>
-                  <td className="p-3 font-mono text-emerald-400">{f.waterSavedLiters.toLocaleString()} L</td>
-                  <td className="p-3">
-                    <button 
-                      onClick={() => showNotification(`Audit report dispatched for ${f.name}`)}
-                      className="text-xs text-aqua-400 hover:underline cursor-pointer"
-                    >
-                      Audit Report
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* DISPATCH SMS / WHATSAPP BROADCAST ALERT */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-        <h3 className="text-base font-bold text-white flex items-center gap-2">
-          <Bell className="w-5 h-5 text-amber-400" />
-          <span>Dispatch District Emergency Alert (SMS & WhatsApp Gateway)</span>
-        </h3>
-
-        <form onSubmit={handleBroadcastAlert} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Broadcast Alert Message (Translates automatically to Hindi, Punjabi, Gujarati)</label>
-            <textarea
-              rows={3}
-              required
-              placeholder="e.g. Heatwave warning issued for Ludhiana district. Irrigate fields during early morning hours (5 AM - 7 AM) to prevent evaporation loss."
-              value={broadcastMessage}
-              onChange={(e) => setBroadcastMessage(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-agri-500"
-            ></textarea>
+        {/* HEADER — stats folded in as ledger fields, not a separate card row */}
+        <div className="space-y-5">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-xs" style={{ color: palette.inkSoft }}>
+                <ShieldCheck className="w-3.5 h-3.5" /> FPO regional portal
+              </div>
+              <h1 className="font-serif text-3xl mt-1">Cluster oversight</h1>
+              <p className="text-sm mt-2 max-w-xl" style={{ color: palette.inkSoft }}>
+                Water conservation, IoT nodes and heatwave alerts across the district's farm clusters.
+              </p>
+            </div>
+            <div className="text-xs font-mono" style={{ color: palette.water }}>
+              Role — FPO regional director
+            </div>
           </div>
 
-          <button
-            type="submit"
-            className="agri-button-aqua px-6 py-2.5 text-xs flex items-center gap-2"
-          >
-            <Send className="w-4 h-4" />
-            <span>Send Alert to All Farmers</span>
-          </button>
-        </form>
-      </div>
+          <div className="flex flex-wrap gap-x-10 gap-y-4 pt-4" style={{ borderTop: `1px solid ${palette.line}` }}>
+            {[
+              ['Registered farms', `${farms.length} clusters`, palette.ink],
+              ['Cultivated area', `${totalAcres} acres`, palette.ink],
+              ['Water conserved', `${totalWaterSaved.toLocaleString()} L`, palette.green],
+              ['Sensors online', `${onlineSensors} / ${sensors.length}`, palette.water],
+              ['Crops loaded', 'Wheat, cotton, rice', palette.ochre],
+            ].map(([label, value, color]) => (
+              <div key={label as string}>
+                <div className="font-mono text-xl" style={{ color: color as string }}>{value}</div>
+                <div className="text-xs" style={{ color: palette.inkSoft }}>{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
 
+        {/* MAIN — table and broadcast form side by side, not stacked */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+          <div className="lg:col-span-8 space-y-4">
+            <h2 className="font-serif text-2xl">Cluster telemetry</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left" style={{ borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${palette.ink}` }}>
+                    <th className="py-2 pr-3 font-normal" style={{ color: palette.inkSoft }}>Farm</th>
+                    <th className="py-2 pr-3 font-normal" style={{ color: palette.inkSoft }}>Location</th>
+                    <th className="py-2 pr-3 font-normal" style={{ color: palette.inkSoft }}>Crop</th>
+                    <th className="py-2 pr-3 font-normal" style={{ color: palette.inkSoft }}>Moisture</th>
+                    <th className="py-2 pr-3 font-normal" style={{ color: palette.inkSoft }}>Pump</th>
+                    <th className="py-2 pr-3 font-normal text-right" style={{ color: palette.inkSoft }}>Water saved</th>
+                    <th className="py-2 font-normal text-right" style={{ color: palette.inkSoft }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {farms.map((f) => (
+                    <tr key={f.id} style={{ borderBottom: `1px solid ${palette.line}` }}>
+                      <td className="py-3 pr-3 font-medium">{f.name}</td>
+                      <td className="py-3 pr-3" style={{ color: palette.inkSoft }}>
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3" /> {f.location}
+                        </span>
+                      </td>
+                      <td className="py-3 pr-3" style={{ color: palette.inkSoft }}>{f.cropType}</td>
+                      <td className="py-3 pr-3 font-mono" style={{ color: palette.green }}>{f.soilMoisture}%</td>
+                      <td className="py-3 pr-3">
+                        <span style={{ color: f.pumpStatus === 'ON' ? palette.green : palette.inkSoft }}>
+                          {f.pumpStatus} ({f.pumpMode})
+                        </span>
+                      </td>
+                      <td className="py-3 pr-3 font-mono text-right" style={{ color: palette.green }}>
+                        {f.waterSavedLiters.toLocaleString()} L
+                      </td>
+                      <td className="py-3 text-right">
+                        <button
+                          onClick={() => showNotification(`Audit report dispatched for ${f.name}`)}
+                          className="text-xs underline"
+                          style={{ color: palette.water }}
+                        >
+                          Audit
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Broadcast alert — a side panel instead of a full-width section below */}
+          <div className="lg:col-span-4 space-y-3 lg:pl-8 lg:border-l" style={{ borderColor: palette.line }}>
+            <h2 className="font-serif text-2xl">District alert</h2>
+            <p className="text-xs" style={{ color: palette.inkSoft }}>
+              Sent over SMS and WhatsApp, auto-translated to Hindi, Punjabi and Gujarati.
+            </p>
+            <form onSubmit={handleBroadcastAlert} className="space-y-3">
+              <textarea
+                rows={5}
+                required
+                placeholder="e.g. Heatwave warning for Ludhiana district. Irrigate between 5–7 AM to prevent evaporation loss."
+                value={broadcastMessage}
+                onChange={(e) => setBroadcastMessage(e.target.value)}
+                className="w-full px-4 py-2.5 text-sm focus:outline-none"
+                style={{ backgroundColor: palette.panel, border: `1px solid ${palette.line}`, color: palette.ink }}
+              />
+              <button
+                type="submit"
+                className="w-full px-4 py-2.5 text-sm text-white flex items-center justify-center gap-2"
+                style={{ backgroundColor: palette.water }}
+              >
+                <Send className="w-4 h-4" /> Send to all farmers
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

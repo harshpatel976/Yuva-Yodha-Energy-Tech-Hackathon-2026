@@ -1,88 +1,112 @@
+import React from 'react';
 import { Droplet, Heart, Cpu, Globe2, Award } from 'lucide-react';
+
+const palette = {
+  base: '#2B2420',
+  surface: '#3D342C',
+  cream: '#F2E9DA',
+  tan: '#B8A88F',
+  copper: '#C1652F',
+  sage: '#6E8B6B',
+  line: 'rgba(242,233,218,0.15)',
+};
+
+const hardware = [
+  'ESP32-WROOM-32 microcontroller',
+  'Capacitive soil moisture sensor v1.2',
+  'DHT22 temperature & humidity sensor',
+  'MQTT over GSM / LoRaWAN',
+];
+
+const sdgs = [
+  { label: 'SDG 6 — Clean water & sanitation', color: '#5C8AA6' },
+  { label: 'SDG 13 — Climate action', color: '#6E8B6B' },
+  { label: 'SDG 2 — Zero hunger & sustainable farming', color: '#C1652F' },
+  { label: 'SDG 9 — Industry & infrastructure', color: '#9C7FB8' },
+];
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-950 border-t border-slate-800 text-slate-400 text-xs py-12 px-4 sm:px-6 lg:px-8 mt-16">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-        
-        {/* Col 1: Brand & Overview */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-              <Droplet className="w-5 h-5 text-emerald-400" />
+    <footer className="mt-16" style={{ backgroundColor: palette.base, color: palette.tan }}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 py-14 space-y-10 text-xs">
+
+        {/* Brand + accessibility, split two ways instead of four equal columns */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
+          <div className="md:col-span-3 space-y-4">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-8 h-8 flex items-center justify-center text-sm font-serif"
+                style={{ backgroundColor: palette.copper, color: palette.base }}
+              >
+                <Droplet className="w-4 h-4" style={{ color: palette.base }} />
+              </div>
+              <span className="text-base font-serif" style={{ color: palette.cream }}>Smart Water Guardian</span>
             </div>
-            <span className="text-base font-bold text-white tracking-wide">Smart Water Guardian</span>
+            <p className="leading-relaxed max-w-md">
+              An AI and IoT irrigation platform built for sustainable agriculture, climate
+              adaptation, and groundwater conservation.
+            </p>
+            <div className="flex items-center gap-2" style={{ color: palette.copper }}>
+              <Award className="w-4 h-4" /> NextStep Hacks 2026, Environment Challenge
+            </div>
           </div>
-          <p className="text-slate-400 leading-relaxed">
-            AI & IoT powered smart irrigation and precision farming platform built for sustainable agriculture, climate adaptation, and groundwater conservation.
-          </p>
-          <div className="flex items-center gap-2 text-agri-400 font-semibold">
-            <Award className="w-4 h-4 text-emerald-400" /> NextStep Hacks 2026 Environment Challenge
-          </div>
-        </div>
 
-        {/* Col 2: SDG Goals */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-semibold text-slate-200 tracking-wide uppercase">UN SDG Alignment</h4>
-          <ul className="space-y-2">
-            <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-              <span>SDG 6: Clean Water & Sanitation</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span>SDG 13: Climate Action</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-              <span>SDG 2: Zero Hunger & Sustainable Farming</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-purple-400"></span>
-              <span>SDG 9: Industry, Innovation & Infrastructure</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* Col 3: Hardware & IoT Specs */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-semibold text-slate-200 tracking-wide uppercase">IoT & Hardware Tech</h4>
-          <ul className="space-y-2 text-slate-400">
-            <li className="flex items-center gap-2">
-              <Cpu className="w-3.5 h-3.5 text-aqua-400" /> ESP32-WROOM-32 Microcontroller
-            </li>
-            <li className="flex items-center gap-2">
-              <Cpu className="w-3.5 h-3.5 text-aqua-400" /> Capacitive Soil Moisture Sensor (v1.2)
-            </li>
-            <li className="flex items-center gap-2">
-              <Cpu className="w-3.5 h-3.5 text-aqua-400" /> DHT22 Ambient Temp/Humidity Sensor
-            </li>
-            <li className="flex items-center gap-2">
-              <Cpu className="w-3.5 h-3.5 text-aqua-400" /> MQTT Protocol over GSM / LoRaWAN
-            </li>
-          </ul>
-        </div>
-
-        {/* Col 4: Regional Languages & Contact */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-semibold text-slate-200 tracking-wide uppercase">Farmer Accessibility</h4>
-          <p className="text-slate-400">
-            Designed for low digital literacy with large UI buttons, voice recognition in Hindi, Punjabi, Gujarati, Marathi, Tamil, and offline SMS fallback.
-          </p>
-          <div className="pt-2 flex items-center gap-2 text-slate-500">
-            <Globe2 className="w-4 h-4 text-slate-400" /> 
-            <span>Built for Indian & Global Farmers</span>
+          <div className="md:col-span-2 space-y-3">
+            <h4 className="text-sm" style={{ color: palette.cream }}>Built for every farmer</h4>
+            <p className="leading-relaxed">
+              Large buttons for low digital literacy, voice recognition in Hindi, Punjabi,
+              Gujarati, Marathi and Tamil, and an offline SMS fallback.
+            </p>
+            <div className="flex items-center gap-2" style={{ color: palette.tan }}>
+              <Globe2 className="w-4 h-4" /> Built for Indian and global farmers
+            </div>
           </div>
         </div>
 
-      </div>
+        {/* Hardware — a wrapped tag row, not a bulleted column */}
+        <div className="pt-6 space-y-3" style={{ borderTop: `1px solid ${palette.line}` }}>
+          <h4 className="text-sm" style={{ color: palette.cream }}>IoT and hardware</h4>
+          <div className="flex flex-wrap gap-2">
+            {hardware.map((h) => (
+              <span
+                key={h}
+                className="flex items-center gap-1.5 px-3 py-1.5"
+                style={{ border: `1px solid ${palette.line}` }}
+              >
+                <Cpu className="w-3.5 h-3.5" style={{ color: palette.sage }} />
+                {h}
+              </span>
+            ))}
+          </div>
+        </div>
 
-      <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row justify-between items-center gap-4 text-slate-500">
-        <p>© 2026 Smart Water Guardian. Open source for agricultural sustainability.</p>
-        <div className="flex items-center gap-1">
-          <span>Crafted with</span>
-          <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-          <span>for Farmers & Climate Action</span>
+        {/* SDG alignment — a colored tag row instead of a bulleted column */}
+        <div className="pt-6 space-y-3" style={{ borderTop: `1px solid ${palette.line}` }}>
+          <h4 className="text-sm" style={{ color: palette.cream }}>UN SDG alignment</h4>
+          <div className="flex flex-wrap gap-2">
+            {sdgs.map((s) => (
+              <span
+                key={s.label}
+                className="px-3 py-1.5"
+                style={{ border: `1px solid ${s.color}`, color: s.color }}
+              >
+                {s.label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom bar — heart line and copyright swapped in position */}
+        <div
+          className="pt-6 flex flex-col-reverse sm:flex-row justify-between items-center gap-3"
+          style={{ borderTop: `1px solid ${palette.line}` }}
+        >
+          <div className="flex items-center gap-1.5">
+            <span>Crafted with</span>
+            <Heart className="w-3.5 h-3.5" style={{ color: palette.copper, fill: palette.copper }} />
+            <span>for farmers and climate action</span>
+          </div>
+          <p>© 2026 Smart Water Guardian. Open source for agricultural sustainability.</p>
         </div>
       </div>
     </footer>

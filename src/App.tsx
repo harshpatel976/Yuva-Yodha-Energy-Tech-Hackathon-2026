@@ -11,6 +11,7 @@ import { AnalyticsCenter } from './components/AnalyticsCenter';
 import { CommunityForum } from './components/CommunityForum';
 import { AdminPanel } from './components/AdminPanel';
 import { VoiceAssistantModal } from './components/VoiceAssistantModal';
+import { OnboardingGate } from './components/OnboardingGate';
 
 const AppContent: React.FC = () => {
   const { activeTab } = useFarmContext();
@@ -39,7 +40,10 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-agri-500 selection:text-slate-900">
+    // bg-slate-950/text-slate-100 removed — each page now sets its own
+    // background from the shared palette (parchment content pages,
+    // espresso navbar/footer), so the shell itself stays neutral.
+    <div className="min-h-screen flex flex-col font-sans">
       <Navbar />
       <main className="flex-1">
         {renderActiveView()}
@@ -53,7 +57,11 @@ const AppContent: React.FC = () => {
 export default function App() {
   return (
     <FarmProvider>
-      <AppContent />
+      {/* First-time visitors fill out the onboarding form here instead of
+          logging in; everyone after that sees AppContent as before. */}
+      <OnboardingGate>
+        <AppContent />
+      </OnboardingGate>
     </FarmProvider>
   );
 }

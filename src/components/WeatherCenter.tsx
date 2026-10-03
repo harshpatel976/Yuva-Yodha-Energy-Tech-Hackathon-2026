@@ -3,108 +3,130 @@ import { useFarmContext } from '../context/FarmContext';
 import { MOCK_WEATHER_7DAYS } from '../data/mockData';
 import { CloudSun, CloudRain, Sun, CloudLightning, Wind, Droplets } from 'lucide-react';
 
+const palette = {
+  parchment: '#EAE3CD',
+  panel: '#F6F1E3',
+  ink: '#262B1E',
+  inkSoft: '#5C6350',
+  line: '#CDC3A0',
+  green: '#3E6B45',
+  greenDeep: '#26422B',
+  water: '#2E6C89',
+  ochre: '#B0651E',
+};
+
 export const WeatherCenter: React.FC = () => {
   const { selectedFarm } = useFarmContext();
 
-  const getWeatherIcon = (condition: string) => {
+  const getWeatherIcon = (condition: string, size = 'w-6 h-6') => {
     switch (condition) {
-      case 'Rainy': return <CloudRain className="w-8 h-8 text-sky-400" />;
-      case 'Thunderstorm': return <CloudLightning className="w-8 h-8 text-amber-400" />;
-      case 'Sunny': return <Sun className="w-8 h-8 text-yellow-400 animate-spin-slow" />;
-      default: return <CloudSun className="w-8 h-8 text-emerald-400" />;
+      case 'Rainy':
+        return <CloudRain className={size} style={{ color: palette.water }} />;
+      case 'Thunderstorm':
+        return <CloudLightning className={size} style={{ color: palette.ochre }} />;
+      case 'Sunny':
+        return <Sun className={size} style={{ color: palette.ochre }} />;
+      default:
+        return <CloudSun className={size} style={{ color: palette.green }} />;
     }
   };
 
+  const today = MOCK_WEATHER_7DAYS[0];
+
   return (
-    <div className="space-y-8 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      
-      {/* HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl">
-        <div>
-          <div className="flex items-center gap-2">
-            <CloudSun className="w-7 h-7 text-sky-400" />
-            <h1 className="text-2xl font-bold text-white">Weather Intelligence & Rainfall Forecast</h1>
+    <div style={{ backgroundColor: palette.parchment, color: palette.ink }} className="font-sans min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 py-10 space-y-10">
+
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <div className="text-xs" style={{ color: palette.inkSoft }}>Weather intelligence</div>
+            <h1 className="font-serif text-3xl mt-1">Forecast for {selectedFarm.location}</h1>
+            <p className="text-sm mt-2" style={{ color: palette.inkSoft }}>
+              Rainfall-aware scheduling to decide when irrigation can wait.
+            </p>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Real-time meteorological monitoring for <strong className="text-emerald-400">{selectedFarm.location}</strong>
-          </p>
+          <div className="text-xs font-mono" style={{ color: palette.inkSoft }}>
+            Radar sync — live OpenWeatherMap API
+          </div>
         </div>
 
-        <div className="px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300 font-mono">
-          Radar Sync: Live OpenWeatherMap API
-        </div>
-      </div>
-
-      {/* TODAY'S FEATURED WEATHER WIDGET */}
-      <div className="glass-panel rounded-2xl p-8 border border-sky-500/30 bg-gradient-to-r from-slate-900 via-sky-950/20 to-slate-900 space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center gap-4">
-            {getWeatherIcon(MOCK_WEATHER_7DAYS[0].condition)}
+        {/* TODAY — a typographic hero, not a boxed widget */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-8" style={{ borderBottom: `1px solid ${palette.line}` }}>
+          <div className="flex items-center gap-5">
+            {getWeatherIcon(today.condition, 'w-12 h-12')}
             <div>
-              <h2 className="text-3xl font-extrabold text-white">{MOCK_WEATHER_7DAYS[0].condition}</h2>
-              <p className="text-xs text-slate-400">High: {MOCK_WEATHER_7DAYS[0].tempMax}°C | Low: {MOCK_WEATHER_7DAYS[0].tempMin}°C</p>
+              <h2 className="font-serif text-5xl">{today.condition}</h2>
+              <p className="text-sm mt-1" style={{ color: palette.inkSoft }}>
+                High {today.tempMax}° · Low {today.tempMin}°
+              </p>
             </div>
           </div>
 
-          <div className="flex gap-4">
-            <div className="bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-800 text-center">
-              <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                <CloudRain className="w-3.5 h-3.5 text-sky-400" /> Rain Prob.
+          <div className="flex gap-10">
+            <div>
+              <div className="flex items-center gap-1.5 text-xs" style={{ color: palette.inkSoft }}>
+                <CloudRain className="w-3.5 h-3.5" /> Rain probability
               </div>
-              <div className="text-lg font-bold text-sky-400">{MOCK_WEATHER_7DAYS[0].rainProbability}%</div>
+              <div className="font-mono text-2xl mt-0.5" style={{ color: palette.water }}>{today.rainProbability}%</div>
             </div>
-
-            <div className="bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-800 text-center">
-              <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                <Droplets className="w-3.5 h-3.5 text-emerald-400" /> Humidity
+            <div>
+              <div className="flex items-center gap-1.5 text-xs" style={{ color: palette.inkSoft }}>
+                <Droplets className="w-3.5 h-3.5" /> Humidity
               </div>
-              <div className="text-lg font-bold text-emerald-400">{MOCK_WEATHER_7DAYS[0].humidity}%</div>
+              <div className="font-mono text-2xl mt-0.5" style={{ color: palette.green }}>{today.humidity}%</div>
             </div>
-
-            <div className="bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-800 text-center">
-              <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                <Wind className="w-3.5 h-3.5 text-amber-400" /> Wind
+            <div>
+              <div className="flex items-center gap-1.5 text-xs" style={{ color: palette.inkSoft }}>
+                <Wind className="w-3.5 h-3.5" /> Wind
               </div>
-              <div className="text-lg font-bold text-amber-400">{MOCK_WEATHER_7DAYS[0].windSpeed} km/h</div>
+              <div className="font-mono text-2xl mt-0.5" style={{ color: palette.ochre }}>{today.windSpeed} km/h</div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 7-DAY FORECAST GRID */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-bold text-white">7-Day Irrigation Forecast</h3>
+        {/* 7-DAY FORECAST — a ledger table of rows, not seven identical cards */}
+        <div className="space-y-4">
+          <h3 className="font-serif text-2xl">7-day irrigation outlook</h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
-          {MOCK_WEATHER_7DAYS.map((day, idx) => (
-            <div 
-              key={idx}
-              className={`glass-card rounded-2xl p-4 text-center space-y-3 border ${
-                idx === 1 ? 'border-sky-500/60 bg-sky-950/30' : 'border-slate-800'
-              }`}
-            >
-              <div className="text-xs font-bold text-slate-200">{day.day}</div>
-              <div className="text-[10px] text-slate-400">{day.date}</div>
+          <div>
+            {MOCK_WEATHER_7DAYS.map((day, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-4 sm:gap-8 py-4"
+                style={{
+                  borderBottom: `1px solid ${palette.line}`,
+                  borderLeft: idx === 1 ? `3px solid ${palette.water}` : '3px solid transparent',
+                  paddingLeft: '0.75rem',
+                }}
+              >
+                <div className="w-20 shrink-0">
+                  <div className="text-sm font-medium">{day.day}</div>
+                  <div className="text-xs" style={{ color: palette.inkSoft }}>{day.date}</div>
+                </div>
 
-              <div className="flex justify-center my-2">
-                {getWeatherIcon(day.condition)}
-              </div>
+                <div className="w-8 flex justify-center shrink-0">{getWeatherIcon(day.condition)}</div>
 
-              <div className="text-sm font-bold text-white">
-                {day.tempMax}° / <span className="text-slate-400 text-xs">{day.tempMin}°</span>
-              </div>
+                <div className="w-28 shrink-0 text-sm">
+                  {day.tempMax}° <span style={{ color: palette.inkSoft }}>/ {day.tempMin}°</span>
+                </div>
 
-              <div className="bg-slate-900 p-2 rounded-lg border border-slate-800 text-[10px]">
-                <div className="text-slate-400">Rain Prob</div>
-                <div className={`font-bold ${day.rainProbability > 50 ? 'text-sky-400' : 'text-slate-300'}`}>
-                  {day.rainProbability}%
+                <div className="flex-1 flex items-center gap-3">
+                  <div className="h-1.5 flex-1" style={{ backgroundColor: palette.line }}>
+                    <div
+                      className="h-full"
+                      style={{ width: `${day.rainProbability}%`, backgroundColor: palette.water }}
+                    />
+                  </div>
+                  <span className="font-mono text-xs w-10 text-right" style={{ color: palette.water }}>
+                    {day.rainProbability}%
+                  </span>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-
     </div>
   );
 };

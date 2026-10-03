@@ -2,12 +2,39 @@ import React, { useState } from 'react';
 import { useFarmContext } from '../context/FarmContext';
 import { Cpu, Battery, Plus, Wifi } from 'lucide-react';
 
+const palette = {
+  parchment: '#EAE3CD',
+  panel: '#F6F1E3',
+  ink: '#262B1E',
+  inkSoft: '#5C6350',
+  line: '#CDC3A0',
+  green: '#3E6B45',
+  greenDeep: '#26422B',
+  water: '#2E6C89',
+  ochre: '#B0651E',
+};
+
+const hardware = [
+  { part: 'Microcontroller gateway', spec: 'ESP32-WROOM-32 (Wi-Fi + BLE + GSM)', purpose: 'Reads analog moisture data and sends MQTT packets', cost: 450 },
+  { part: 'Soil moisture sensor', spec: 'Capacitive moisture sensor v1.2, corrosion resistant', purpose: 'Measures dielectric permittivity of soil', cost: 120 },
+  { part: 'Climate sensor', spec: 'DHT22 / AM2302 temperature & humidity sensor', purpose: 'Measures ambient microclimate evapotranspiration', cost: 220 },
+  { part: 'Relay module', spec: '5V 10A optocoupler relay board', purpose: 'Controls the water pump starter relay', cost: 90 },
+  { part: 'Solar power & battery', spec: '5V solar panel with 18650 Li-ion 3.7V battery', purpose: '24/7 off-grid power supply in the field', cost: 850 },
+];
+
 export const SensorMonitoring: React.FC = () => {
   const { sensors, selectedFarmId, selectedFarm, addSensorNode, showNotification } = useFarmContext();
   const [newSensorName, setNewSensorName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const farmSensors = sensors.filter(s => s.farmId === selectedFarmId);
+  const farmSensors = sensors.filter((s) => s.farmId === selectedFarmId);
+  const onlineCount = farmSensors.filter((s) => s.status === 'ONLINE').length;
+  const avgBattery = farmSensors.length
+    ? Math.round(farmSensors.reduce((a, s) => a + s.batteryLevel, 0) / farmSensors.length)
+    : 0;
+  const avgSignal = farmSensors.length
+    ? Math.round(farmSensors.reduce((a, s) => a + s.signalStrength, 0) / farmSensors.length)
+    : 0;
 
   const handleAddSensor = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,151 +45,148 @@ export const SensorMonitoring: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      
-      {/* SECTION HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl">
-        <div>
-          <div className="flex items-center gap-2">
-            <Cpu className="w-7 h-7 text-emerald-400" />
-            <h1 className="text-2xl font-bold text-white">IoT Telemetry & Hardware Nodes</h1>
+    <div style={{ backgroundColor: palette.parchment, color: palette.ink }} className="font-sans min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 py-10 space-y-10">
+
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <div className="text-xs" style={{ color: palette.inkSoft }}>IoT telemetry</div>
+            <h1 className="font-serif text-3xl mt-1">Hardware nodes for {selectedFarm.name}</h1>
+            <p className="text-sm mt-2 max-w-xl" style={{ color: palette.inkSoft }}>
+              ESP32 microcontrollers, capacitive soil sensors and solar gateways reporting
+              from the field.
+            </p>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Monitoring low-cost ESP32 microcontrollers, capacitive soil sensors & solar gateways for <strong className="text-emerald-400">{selectedFarm.name}</strong>
-          </p>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-4 py-2.5 text-sm text-white flex items-center gap-2 self-start"
+            style={{ backgroundColor: palette.green }}
+          >
+            <Plus className="w-4 h-4" /> Add sensor node
+          </button>
         </div>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="agri-button-primary px-4 py-2.5 text-xs flex items-center gap-2"
+        {/* SUMMARY STRIP — new, wasn't in the original */}
+        <div
+          className="grid grid-cols-2 sm:grid-cols-4 divide-x"
+          style={{ border: `1px solid ${palette.line}`, borderColor: palette.line, backgroundColor: palette.panel }}
         >
-          <Plus className="w-4 h-4" />
-          <span>Add New Sensor Node</span>
-        </button>
-      </div>
-
-      {/* SENSOR NODES GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {farmSensors.map(sensor => (
-          <div key={sensor.id} className="glass-card rounded-2xl p-6 space-y-4 border border-slate-800">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-base font-bold text-white">{sensor.nodeName}</h3>
-                <div className="text-[10px] text-slate-400 font-mono mt-0.5">{sensor.firmwareVersion}</div>
-              </div>
-
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono ${
-                sensor.status === 'ONLINE' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-red-500/20 text-red-300'
-              }`}>
-                ● {sensor.status}
-              </span>
+          {[
+            ['Nodes paired', farmSensors.length, palette.ink],
+            ['Online now', onlineCount, palette.green],
+            ['Avg. battery', `${avgBattery}%`, palette.ochre],
+            ['Avg. signal', `${avgSignal}%`, palette.water],
+          ].map(([label, value, color]) => (
+            <div key={label as string} className="px-5 py-4">
+              <div className="font-mono text-2xl" style={{ color: color as string }}>{value}</div>
+              <div className="text-xs mt-0.5" style={{ color: palette.inkSoft }}>{label}</div>
             </div>
+          ))}
+        </div>
 
-            {/* Readout Widgets */}
-            <div className="grid grid-cols-2 gap-3 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-              <div>
-                <div className="text-[10px] text-slate-400">Soil Moisture</div>
-                <div className="text-2xl font-bold text-emerald-400">{sensor.moistureReading}%</div>
+        {/* SENSOR LIST — a vertical list of entries, not a grid of cards */}
+        <div>
+          {farmSensors.map((sensor) => (
+            <div
+              key={sensor.id}
+              className="py-5 flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8"
+              style={{ borderBottom: `1px solid ${palette.line}` }}
+            >
+              <div className="lg:w-48 shrink-0">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full inline-block"
+                    style={{ backgroundColor: sensor.status === 'ONLINE' ? palette.green : palette.ochre }}
+                  />
+                  <span className="text-sm font-medium">{sensor.nodeName}</span>
+                </div>
+                <div className="text-[10px] font-mono mt-0.5" style={{ color: palette.inkSoft }}>
+                  {sensor.firmwareVersion}
+                </div>
               </div>
-              <div>
-                <div className="text-[10px] text-slate-400">Soil Temp</div>
-                <div className="text-2xl font-bold text-amber-400">{sensor.tempReading}°C</div>
+
+              <div className="flex gap-8">
+                <div>
+                  <div className="text-xs" style={{ color: palette.inkSoft }}>Soil moisture</div>
+                  <div className="font-mono text-xl" style={{ color: palette.green }}>{sensor.moistureReading}%</div>
+                </div>
+                <div>
+                  <div className="text-xs" style={{ color: palette.inkSoft }}>Soil temp</div>
+                  <div className="font-mono text-xl" style={{ color: palette.ochre }}>{sensor.tempReading}°C</div>
+                </div>
+              </div>
+
+              <div className="flex gap-6 text-xs" style={{ color: palette.inkSoft }}>
+                <span className="flex items-center gap-1.5">
+                  <Battery className="w-3.5 h-3.5" /> {sensor.batteryLevel}%
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Wifi className="w-3.5 h-3.5" /> {sensor.signalStrength}%
+                </span>
+              </div>
+
+              <div className="flex-1 flex justify-between items-center text-xs lg:justify-end lg:gap-6" style={{ color: palette.inkSoft }}>
+                <span>Last packet {sensor.lastUpdated}</span>
+                <button
+                  onClick={() => showNotification(`Calibrated ${sensor.nodeName} offset successfully.`)}
+                  className="underline"
+                  style={{ color: palette.green }}
+                >
+                  Calibrate
+                </button>
               </div>
             </div>
+          ))}
+        </div>
 
-            {/* Telemetry Status Bar */}
-            <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-800">
-              <div className="flex items-center gap-2 text-slate-400">
-                <Battery className="w-4 h-4 text-emerald-400" />
-                <span>Battery: <strong className="text-slate-200">{sensor.batteryLevel}%</strong></span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-400">
-                <Wifi className="w-4 h-4 text-aqua-400" />
-                <span>Signal: <strong className="text-slate-200">{sensor.signalStrength}%</strong></span>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center text-[10px] text-slate-500 pt-2 border-t border-slate-800/60">
-              <span>Last packet: {sensor.lastUpdated}</span>
-              <button 
-                onClick={() => showNotification(`Calibrated ${sensor.nodeName} offset successfully.`)}
-                className="text-emerald-400 hover:underline cursor-pointer"
-              >
-                Calibrate Sensor
-              </button>
-            </div>
+        {/* HARDWARE COST TABLE — a plain ledger table, not a dark data-grid */}
+        <div className="pt-4 space-y-4">
+          <h2 className="font-serif text-2xl">Hardware schematic and cost</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left" style={{ borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${palette.ink}` }}>
+                  <th className="py-2 pr-4 font-normal" style={{ color: palette.inkSoft }}>Component</th>
+                  <th className="py-2 pr-4 font-normal" style={{ color: palette.inkSoft }}>Specification</th>
+                  <th className="py-2 pr-4 font-normal" style={{ color: palette.inkSoft }}>Purpose</th>
+                  <th className="py-2 font-normal text-right" style={{ color: palette.inkSoft }}>Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                {hardware.map((row) => (
+                  <tr key={row.part} style={{ borderBottom: `1px solid ${palette.line}` }}>
+                    <td className="py-3 pr-4 font-medium">{row.part}</td>
+                    <td className="py-3 pr-4" style={{ color: palette.inkSoft }}>{row.spec}</td>
+                    <td className="py-3 pr-4" style={{ color: palette.inkSoft }}>{row.purpose}</td>
+                    <td className="py-3 font-mono text-right" style={{ color: palette.green }}>₹{row.cost}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
-      </div>
-
-      {/* HARDWARE SPECIFICATIONS HACKATHON SUMMARY */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-        <h3 className="text-lg font-bold text-white flex items-center gap-2">
-          <Cpu className="w-5 h-5 text-aqua-400" />
-          <span>ESP32 Hardware Schematic & Cost Breakdown</span>
-        </h3>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left text-slate-300">
-            <thead className="bg-slate-900 text-slate-400 uppercase text-[10px]">
-              <tr>
-                <th className="p-3">Component</th>
-                <th className="p-3">Model / Specification</th>
-                <th className="p-3">Purpose</th>
-                <th className="p-3">Est. Unit Cost (₹)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800">
-              <tr>
-                <td className="p-3 font-semibold text-white">Microcontroller Gateway</td>
-                <td className="p-3 text-slate-400">ESP32-WROOM-32 (Wi-Fi + BLE + GSM)</td>
-                <td className="p-3">Reads analog moisture data & sends MQTT packets</td>
-                <td className="p-3 font-mono text-emerald-400">₹450</td>
-              </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">Soil Moisture Sensor</td>
-                <td className="p-3 text-slate-400">Capacitive Moisture Sensor v1.2 (Corrosion resistant)</td>
-                <td className="p-3">Measures dielectric permittivity of soil</td>
-                <td className="p-3 font-mono text-emerald-400">₹120</td>
-              </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">Climate Sensor</td>
-                <td className="p-3 text-slate-400">DHT22 / AM2302 Temp & Humidity Sensor</td>
-                <td className="p-3">Measures ambient micro-climate evapotranspiration</td>
-                <td className="p-3 font-mono text-emerald-400">₹220</td>
-              </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">Relay Module</td>
-                <td className="p-3 text-slate-400">5V 10A Optocoupler Relay Board</td>
-                <td className="p-3">Controls water pump starter relay</td>
-                <td className="p-3 font-mono text-emerald-400">₹90</td>
-              </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">Solar Power & Battery</td>
-                <td className="p-3 text-slate-400">5V Solar Panel + 18650 Li-ion 3.7V Battery</td>
-                <td className="p-3">24/7 Off-grid power supply in fields</td>
-                <td className="p-3 font-mono text-emerald-400">₹850</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
 
       {/* ADD SENSOR MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-          <div className="glass-panel w-full max-w-md p-6 rounded-2xl border border-slate-800 space-y-4 animate-scale-up">
-            <h3 className="text-lg font-bold text-white">Pair New ESP32 Field Sensor</h3>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: 'rgba(38,43,30,0.6)' }}
+        >
+          <div className="w-full max-w-md p-6 space-y-4" style={{ backgroundColor: palette.panel }}>
+            <h3 className="font-serif text-xl">Pair a new field sensor</h3>
             <form onSubmit={handleAddSensor} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Sensor Node Name</label>
+                <label className="block text-xs mb-1" style={{ color: palette.inkSoft }}>Sensor node name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. ESP32-Node #3 (North Plot)"
                   value={newSensorName}
                   onChange={(e) => setNewSensorName(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-agri-500"
+                  className="w-full px-4 py-2 text-sm focus:outline-none"
+                  style={{ backgroundColor: palette.parchment, border: `1px solid ${palette.line}`, color: palette.ink }}
                 />
               </div>
 
@@ -170,22 +194,23 @@ export const SensorMonitoring: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  className="px-4 py-2 text-sm"
+                  style={{ color: palette.inkSoft }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="agri-button-primary px-4 py-2 text-xs"
+                  className="px-4 py-2 text-sm text-white"
+                  style={{ backgroundColor: palette.green }}
                 >
-                  Pair Node
+                  Pair node
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
-
     </div>
   );
 };
