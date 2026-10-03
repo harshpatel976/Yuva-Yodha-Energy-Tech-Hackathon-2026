@@ -11,7 +11,7 @@ import { AnalyticsCenter } from './components/AnalyticsCenter';
 import { CommunityForum } from './components/CommunityForum';
 import { AdminPanel } from './components/AdminPanel';
 import { VoiceAssistantModal } from './components/VoiceAssistantModal';
-import { OnboardingGate } from './components/OnboardingGate';
+import { OnboardingGate } from './components/Onboardinggate';
 
 const AppContent: React.FC = () => {
   const { activeTab } = useFarmContext();

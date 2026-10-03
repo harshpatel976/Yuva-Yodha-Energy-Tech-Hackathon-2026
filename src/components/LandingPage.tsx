@@ -5,7 +5,6 @@ import {
   CloudRain,
   TrendingUp,
   Mic,
-  Cpu,
   Sliders,
   ShieldCheck,
   Activity,

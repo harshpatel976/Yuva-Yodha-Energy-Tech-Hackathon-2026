@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFarmContext } from '../context/FarmContext';
-import { BrainCircuit, CheckCircle2, Zap } from 'lucide-react';
+import { CheckCircle2, Zap } from 'lucide-react';
 
 const palette = {
   parchment: '#EAE3CD',
