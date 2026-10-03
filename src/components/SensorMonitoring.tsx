@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useFarmContext } from '../context/FarmContext';
-import { Cpu, Battery, Plus, Wifi } from 'lucide-react';
+import { Battery, Plus, Wifi } from 'lucide-react';
 
 const palette = {
   parchment: '#EAE3CD',
